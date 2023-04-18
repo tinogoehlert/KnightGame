@@ -12,18 +12,18 @@ public class PlayerMovement : MonoBehaviour
 
     [SerializeField] float movementSpeed = 12;
     [SerializeField] float jumpForce = 100;
-	[SerializeField] float jumpCutModifier = 0.05f;
-	[SerializeField] float coyoteTime = 0.5f;
+    [SerializeField] float jumpCutModifier = 0.05f;
+    [SerializeField] float coyoteTime = 0.5f;
 
     float groundCheckDistance = 0.05f;
     float wallCheckDistance = 0.2f;
 
-	float coyoteTimeCounter;
+    float coyoteTimeCounter;
 
     bool isOnGround;
     bool isOnWall;
-	
-	bool isJumpPressed;
+
+    bool isJumpPressed;
 
     RaycastHit2D[] groundHit = new RaycastHit2D[5];
     RaycastHit2D[] wallHit = new RaycastHit2D[5];
@@ -42,19 +42,21 @@ public class PlayerMovement : MonoBehaviour
         isOnGround = col.Cast(Vector2.down, groundHit, groundCheckDistance) > 0;
         isOnWall = col.Cast(transform.localScale.x > 0 ? Vector2.right : Vector2.left, wallHit, wallCheckDistance) > 0;
         animator.SetBool("isRunning", rb.velocity.x != 0);
-		
-		if (isOnGround && !isJumpPressed) {
-			coyoteTimeCounter = coyoteTime;
-		}
 
-		if (!isJumpPressed && rb.velocity.y > 0) {
-			rb.velocity = new Vector2(rb.velocity.x, rb.velocity.y * jumpCutModifier);
-		}
+        if (isOnGround && !isJumpPressed)
+        {
+            coyoteTimeCounter = coyoteTime;
+        }
+
+        if (!isJumpPressed && rb.velocity.y > 0)
+        {
+            rb.velocity = new Vector2(rb.velocity.x, rb.velocity.y * jumpCutModifier);
+        }
 
         if (!isOnWall)
         {
             rb.velocity = new Vector2(_inputVector.x * movementSpeed, rb.velocity.y);
-			coyoteTimeCounter -= Time.deltaTime;
+            coyoteTimeCounter -= Time.deltaTime;
         }
     }
 
@@ -69,10 +71,10 @@ public class PlayerMovement : MonoBehaviour
 
     public void OnJump(InputAction.CallbackContext ctx)
     {
-		isJumpPressed = ctx.ReadValueAsButton();
+        isJumpPressed = ctx.ReadValueAsButton();
         if (isJumpPressed && coyoteTimeCounter > 0)
         {
-			rb.velocity = new Vector2(rb.velocity.x, jumpForce);
+            rb.velocity = new Vector2(rb.velocity.x, jumpForce);
             coyoteTimeCounter = 0;
         }
     }
