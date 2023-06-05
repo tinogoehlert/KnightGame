@@ -22,6 +22,7 @@ public class PlayerMovement : MonoBehaviour
 
     bool isOnGround;
     bool isOnWall;
+    bool isDead;
 
     bool isJumpPressed;
 
@@ -39,6 +40,8 @@ public class PlayerMovement : MonoBehaviour
 
     void FixedUpdate()
     {
+        if (isDead) return;
+
         isOnGround = col.Cast(Vector2.down, groundHit, groundCheckDistance) > 0;
         isOnWall = col.Cast(transform.localScale.x > 0 ? Vector2.right : Vector2.left, wallHit, wallCheckDistance) > 0;
         animator.SetBool("isRunning", rb.velocity.x != 0);
@@ -62,6 +65,7 @@ public class PlayerMovement : MonoBehaviour
 
     public void OnMove(InputAction.CallbackContext ctx)
     {
+        if (isDead) return;
         _inputVector = ctx.ReadValue<Vector2>();
         if (_inputVector != Vector2.zero)
         {
@@ -69,8 +73,14 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
+    public void Killme()
+    {
+        isDead = true;
+        animator.SetBool("isDead", isDead);
+    }
     public void OnJump(InputAction.CallbackContext ctx)
     {
+        if (isDead) return;
         isJumpPressed = ctx.ReadValueAsButton();
         if (isJumpPressed && coyoteTimeCounter > 0)
         {
