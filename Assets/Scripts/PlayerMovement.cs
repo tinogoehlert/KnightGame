@@ -45,6 +45,9 @@ public class PlayerMovement : MonoBehaviour
         isOnGround = col.Cast(Vector2.down, groundHit, groundCheckDistance) > 0;
         isOnWall = col.Cast(transform.localScale.x > 0 ? Vector2.right : Vector2.left, wallHit, wallCheckDistance) > 0;
         animator.SetBool("isRunning", rb.velocity.x != 0);
+        animator.SetBool("isGrounded", isOnGround);
+        animator.SetFloat("velocity_y", rb.velocity.y);
+
 
         if (isOnGround && !isJumpPressed)
         {
@@ -75,8 +78,11 @@ public class PlayerMovement : MonoBehaviour
 
     public void Killme()
     {
+        if (isDead) return;
         isDead = true;
         animator.SetBool("isDead", isDead);
+        animator.SetTrigger("Hit");
+        // waere das nicht ne coole Stelle für eine Death Screen Animation? :-)
     }
     public void OnJump(InputAction.CallbackContext ctx)
     {
